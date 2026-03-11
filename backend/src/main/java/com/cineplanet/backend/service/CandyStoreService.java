@@ -25,7 +25,7 @@ public class CandyStoreService {
     public List<CandyStoreItemDTO> getAll(){
         try {
             log.info("CandyStoreService -> sp_web_get_candy_items");
-            List<CandyStoreItemDTO> items = candyStoreRepository.findAll()
+            List<CandyStoreItemDTO> items = candyStoreRepository.getCandyItems()
                     .stream()
                     .map(item -> toDTO(item))
                     .collect(Collectors.toList());
