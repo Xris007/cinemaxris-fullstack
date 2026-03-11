@@ -6,6 +6,7 @@ import com.cineplanet.backend.repository.CandyStoreRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,13 +21,16 @@ public class CandyStoreService {
         this.candyStoreRepository = candyStoreRepository;
     }
 
+    @Transactional
     public List<CandyStoreItemDTO> getAll(){
         try {
-            log.info("CandyService :: getAll");
-            return candyStoreRepository.findAll()
+            log.info("CandyStoreService -> sp_web_get_candy_items");
+            List<CandyStoreItemDTO> items = candyStoreRepository.getCandyItems()
                     .stream()
-                    .map(this::toDTO)
+                    .map(item -> toDTO(item))
                     .collect(Collectors.toList());
+            log.info("{} cantidad de productos", items.size());
+            return items;
         } catch (Exception e) {
             log.error("Error al obtener los productos: ", e.getMessage());
             throw new RuntimeException(e);
