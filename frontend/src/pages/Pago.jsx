@@ -35,30 +35,47 @@ export default function Pago() {
   }
 
   const handlePagar = async () => {
-    setLoading(true)
-    try {
-      const operationDate = new Date().toISOString()
-      const txId = 'TXN-' + Math.random().toString(36).substr(2, 8).toUpperCase()
+  setLoading(true)
+  try {
+    // Paso 1: Llamar a PayU
+    const payuResponse = await axios.post('http://localhost:8090/api/payment/process', {
+      cardNumber: form.card,
+      expiry: form.expiry,
+      cvv: form.cvv,
+      email: form.email,
+      nombre: form.nombre,
+      docNum: form.docNum,
+      amount: total.toFixed(2),
+    })
 
-      const response = await axios.post('http://localhost:8090/api/complete', {
-        email: form.email,
-        nombres: form.nombre,
-        numeroDni: form.docNum,
-        operationDate: operationDate,
-        transactionId: txId,
-      })
-
-      if (response.data.code === '0') {
-        setTransactionId(txId)
-        setShowSuccess(true)
-      }
-    } catch (err) {
-      console.error(err)
-      alert('Error al procesar el pago')
-    } finally {
-      setLoading(false)
+    if (!payuResponse.data.success) {
+      alert('Pago rechazado: ' + payuResponse.data.message)
+      return
     }
+
+    const { transactionId: txId, operationDate } = payuResponse.data
+
+    // Paso 2: Llamar a /api/complete
+    const completeResponse = await axios.post('http://localhost:8090/api/complete', {
+      email: form.email,
+      nombres: form.nombre,
+      numeroDni: form.docNum,
+      operationDate: operationDate,
+      transactionId: txId,
+    })
+
+    if (completeResponse.data.code === '0') {
+      setTransactionId(txId)
+      setShowSuccess(true)
+    }
+
+  } catch (err) {
+    console.error(err)
+    alert('Error al procesar el pago')
+  } finally {
+    setLoading(false)
   }
+}
 
   const total = state?.total || 0
 

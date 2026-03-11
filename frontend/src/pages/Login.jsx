@@ -78,7 +78,7 @@ export default function Login() {
             </p>
 
             <h2 className="text-2xl font-serif text-white/90 mb-2">
-              ¡Hola, <em className="text-yellow-500">Juan Pérez</em>!
+              ¡Hola, <em className="text-yellow-500">John Doe</em>!
             </h2>
 
             <p className="text-white/40 text-sm mb-8">

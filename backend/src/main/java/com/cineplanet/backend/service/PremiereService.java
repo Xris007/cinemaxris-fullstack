@@ -25,7 +25,7 @@ public class PremiereService {
     public List<PremiereDTO> getAll() {
         try {
             log.info("PremiereService -> sp_web_get_premieres");
-            List<PremiereDTO> premieres = premiereRepository.getPremieres()
+            List<PremiereDTO> premieres = premiereRepository.findAll()
                     .stream()
                     .map(p -> toDTO(p))
                     .collect(Collectors.toList());
