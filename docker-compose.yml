@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    build: ./mysql
+    container_name: cinema-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ravenousroot00711
+      MYSQL_DATABASE: cinemaxrisdb
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  backend:
+    build: ./backend
+    container_name: cinema-backend
+    ports:
+      - "8090:8090"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cinemaxrisdb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ravenousroot00711
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ./frontend
+    container_name: cinema-frontend
+    ports:
+      - "7000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
